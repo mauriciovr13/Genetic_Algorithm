@@ -1,4 +1,5 @@
 from random import randint
+from string import maketrans
 
 class Genetic_Algorithm():
     """
@@ -42,26 +43,47 @@ class Genetic_Algorithm():
     def mostrarPopulacao(self):
         for individuo in self.populacao:
             print(individuo)
-
-
-    def _funcaoObjetivo(self, num_bin):
+        
+    def calculaAptidao(self, num_bin):
+        # Calcula a nota associada a cada indíviduo que avalia quão boa é a solução por ele representada.
         # Calcula a função objetivo utilizada para avlaiar as soluções produzidas
 
         # converte o número binário para o formato inteiro
         num = int(''.join(num_bin), 2)
         # calcula e retorna o resultado da função objetivo
         return num**2 - 3*num + 4
-
+ 
     def crossover(self, pai, mae):
         # Aplica o crossover de acordo com uma dada probabilidade (taxa de crossover)
-        pass
+        
+        # Verifica a possibilidade de fazer crossover
+        if randint(1, 100) <= self.taxa_crossover:
+            # Escolher ponto de corte
+            ponto_corte = randint(1, self.num_bits)
+            filho_1 = pai[:]
+            filho_1[:ponto_corte] = mae[ponto_corte:]
+            filho_2 = mae[:]
+            filho_2[:ponto_corte] = pai[ponto_corte:]
+        else:
+            filho_1 = pai[:]
+            filho_2 = mae[:]
+        
+        return filho_1, filho_2
 
     def mutacao(self, individuo):
         # Realiza a mutação dos bits de um indiviuo conforme uma dada probabilidade (taxa de mutação)
-        pass
+        
+        # Verificar a possibilidade de fazer mutacao
+        if randint(1,100) <= self.taxa_mutacao:
+            pos_mutacao = randint(0, self.num_bits)
+            traducao = maketrans('+-10', '-+01')
+            individuo = individuo.translate(traducao)
+        
+        return individuo
+        
+    def selecao(self):
+        
 
-    def calculaAptidao(self):
-        # Calcula a nota associada a cada indíviduo que avalia quão boa é a solução por ele representada.
-        pass
+
 
 
