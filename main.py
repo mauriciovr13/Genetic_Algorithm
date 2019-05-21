@@ -22,15 +22,15 @@ def main():
         # Seleciona os dois individuos pelo metodo da roleta
         pai, mae = ga.selecao()
 
-        # Fazendo a mutaca do pai e da mae
-        pai = ga.mutacao(pai)
-        mae = ga.mutacao(mae)
-
         # Crossover dos dois gerando os dois novos filhos
         filho_1, filho_2 = ga.crossover(pai, mae)
+
+        # Fazendo a mutaca dos dois filhos
+        filho_1 = ga.mutacao(filho_1)
+        filho_2 = ga.mutacao(filho_2)
+
         ga.renovarPopulacao(filho_1, filho_2)
 
-        print()
         ga.imprimeComCusto(numGeracao)
         numGeracao += 1
 
