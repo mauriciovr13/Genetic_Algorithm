@@ -1,5 +1,4 @@
 from random import randint, uniform
-from string import maketrans
 
 class Genetic_Algorithm():
     """
@@ -42,6 +41,7 @@ class Genetic_Algorithm():
                 individuo.append(bit)
 
     def mostrarPopulacao(self):
+        print("Populacao inicial:")
         for individuo in self.populacao:
             print(individuo)
     
@@ -84,9 +84,9 @@ class Genetic_Algorithm():
         # Verificar a possibilidade de fazer mutacao
         if randint(1,100) <= self.taxa_mutacao:
             # Escolher uma posicao aleatoria
-            pos_mutacao = randint(0, self.num_bits)
+            pos_mutacao = randint(0, self.num_bits-1)
             # Criar uma matriz de traducacao
-            traducao = maketrans('+-10', '-+01')
+            traducao = str.maketrans('+-10', '-+01')
             # Modificando a posicao escolhida
             individuo[pos_mutacao] = individuo[pos_mutacao].translate(traducao)
 
@@ -125,8 +125,8 @@ class Genetic_Algorithm():
         while(len(selecionados) < 2):
             # Seleciona um ponto flutuante aleatorio dentro do interavalo
             r = uniform(0, soma)
-            for i in range(self.prob_selecao):
-                s += probabilidade[i]
+            for i in range(len(self.prob_selecao)):
+                s += self.prob_selecao[i]
                 if s >= r:
                     selecionados.append(self.populacao[i])
                     break
@@ -146,6 +146,26 @@ class Genetic_Algorithm():
                 individuo[indice] = bit
 
         elif numero > self.x_max:
-            limite = bin(self.x_max).replce('0b', '' if self.x_max < 0 else '+').zfill(self.num_bits)
+            limite = bin(self.x_max).replace('0b', '' if self.x_max < 0 else '+').zfill(self.num_bits)
             for indice, bit in enumerate(limite):
                 individuo[indice] = bit
+    
+    def renovarPopulacao(self, filho_1, filho_2):
+        # Encontrar os indices do dois menores elementos da populacao
+        menor_1 = 0
+        for i in range(1, len(self.aptidao)):
+            if(self.aptidao[i] < self.aptidao[menor_1]):
+                menor_1 = i
+        
+        menor_2 = 0
+        for j in range(1, len(self.aptidao)):
+            if(self.aptidao[j] < self.aptidao[menor_2] and j != menor_1):
+                menor_2 = i
+
+        self.populacao[menor_1] = filho_1
+        self.populacao[menor_2] = filho_2
+
+    def imprimeComCusto(self, pop):
+        print("Populacao", pop)
+        for i in range(len(self.populacao)):
+            print(self.populacao[i], self.aptidao[i], str(self.prob_selecao[i]) + "%")
