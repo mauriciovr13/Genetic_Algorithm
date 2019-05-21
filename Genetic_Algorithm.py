@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, uniform
 from string import maketrans
 
 class Genetic_Algorithm():
@@ -36,6 +36,7 @@ class Genetic_Algorithm():
             # zfill preenche o numero para que todos os numeros gerados tenham o mesmo numero de bits
             # o num_bin usara o primeiro bit para ser o bit de sinal e o restante o bit do numero
             num_bin = bin(num).replace('0b', '' if num < 0 else '+').zfill(self.num_bits)
+
             # transfoma num_bin em um vetor para adicionar a populacao
             for bit in num_bin:
                 individuo.append(bit)
@@ -43,15 +44,19 @@ class Genetic_Algorithm():
     def mostrarPopulacao(self):
         for individuo in self.populacao:
             print(individuo)
-        
-    def calculaAptidao(self, num_bin):
-        # Calcula a nota associada a cada indíviduo que avalia quão boa é a solução por ele representada.
-        # Calcula a função objetivo utilizada para avlaiar as soluções produzidas
-
-        # converte o número binário para o formato inteiro
+    
+    def funcao_objetivo(self, num_bin):
+        # Converte o número binário para o formato inteiro
         num = int(''.join(num_bin), 2)
-        # calcula e retorna o resultado da função objetivo
-        return num**2 - 3*num + 4
+        # Calcula e retorna o resultado da função objetivo
+        return num**2 -3*num + 4
+
+    def calcularAptidao(self):
+        # Calcula a nota associada a cada indíviduo que avalia quão boa é a solução por ele representada.
+
+        self.aptidao = []
+        for individuo in self.populacao:
+            self.aptidao.append(self.funcao_objetivo(individuo))
  
     def crossover(self, pai, mae):
         # Aplica o crossover de acordo com uma dada probabilidade (taxa de crossover)
@@ -60,11 +65,11 @@ class Genetic_Algorithm():
         if randint(1, 100) <= self.taxa_crossover:
             # Escolher ponto de corte
             ponto_corte = randint(1, self.num_bits)
-            filho_1 = pai[:]
-            filho_1[:ponto_corte] = mae[ponto_corte:]
-            filho_2 = mae[:]
-            filho_2[:ponto_corte] = pai[ponto_corte:]
+            # Fazer o corte
+            filho_1 = pai[:ponto_corte] + mae[ponto_corte:]
+            filho_2 = mae[:ponto_corte] + pai[ponto_corte:]
         else:
+            # Caso contrário, os filhos serão copias exatas dos pais
             filho_1 = pai[:]
             filho_2 = mae[:]
         
@@ -75,15 +80,50 @@ class Genetic_Algorithm():
         
         # Verificar a possibilidade de fazer mutacao
         if randint(1,100) <= self.taxa_mutacao:
+            # Escolher uma posicao aleatoria
             pos_mutacao = randint(0, self.num_bits)
+            # Criar uma matriz de traducacao
             traducao = maketrans('+-10', '-+01')
-            individuo = individuo.translate(traducao)
-        
+            # Modificando a posicao escolhida
+            individuo[pos_mutacao] = individuo[pos_mutacao].translate(traducao)
+
         return individuo
         
     def selecao(self):
-        
+        # Essa função usa o metodo de roleta para selecionar os individuos
 
+        # Calcula a propabilidade de selecao
+        somaTotal = sum(self.aptidao)
+        # Probabilidade de selecao dos individuso
+        self.prob_selecao = []
+        for i in range(len(self.aptidao)):            
+            self.prob_selecao.append((self.aptidao[i]/somaTotal)*100)
 
-
-
+        '''
+            Inicio
+                T = soma dos valores de aptidão de todos os indivíduos da população
+                Repita N vezes para selecionar n indivíduos
+                    r = valor aleatório entre 0 e T
+                    Percorra sequencialmente os indivíduos da população, acumulando
+                    em S o valor de aptidão dos indivíduos já percorridos
+                    Se S >= r então
+                        Selecione o indivíduo corrente
+                    Fim se
+                Fim Repita
+            Fim
+        '''
+        # Soma dos valores de aptidao de todos os individuos da populacao
+        soma = somaTotal
+        selecionados = []
+        # Guarda a aptidao ate o momento
+        s = 0
+        while(len(selecionados) < 2):
+            # Seleciona um ponto flutuante aleatorio dentro do interavalo
+            r = uniform(0, soma)
+            for i in range(self.prob_selecao):
+                s += probabilidade[i]
+                if s >= r:
+                    selecionados.append(self.populacao[i])
+                    break
+        # Retorna uma lista de selecionados com dois individuos                    
+        return selecionados

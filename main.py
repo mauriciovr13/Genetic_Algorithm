@@ -13,5 +13,7 @@ def main():
         print('Tamanho da populacao:', sys.argv[1], 'Numero de Geraçoes:', sys.argv[2], ', Taxa de mutação:', sys.argv[3], '%, Taxa de crossover:', sys.argv[4], '%')
         ga = Genetic_Algorithm(-10, 10, int(sys.argv[1]), int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[2]))
 
+    ga.mostrarPopulacao()
+
 if __name__ == "__main__":
     main()
