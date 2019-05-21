@@ -68,6 +68,9 @@ class Genetic_Algorithm():
             # Fazer o corte
             filho_1 = pai[:ponto_corte] + mae[ponto_corte:]
             filho_2 = mae[:ponto_corte] + pai[ponto_corte:]
+
+            self._ajustar(filho_1)
+            self._ajustar(filho_2)
         else:
             # Caso contrário, os filhos serão copias exatas dos pais
             filho_1 = pai[:]
@@ -86,6 +89,8 @@ class Genetic_Algorithm():
             traducao = maketrans('+-10', '-+01')
             # Modificando a posicao escolhida
             individuo[pos_mutacao] = individuo[pos_mutacao].translate(traducao)
+
+            self._ajustar(individuo)
 
         return individuo
         
@@ -127,3 +132,20 @@ class Genetic_Algorithm():
                     break
         # Retorna uma lista de selecionados com dois individuos                    
         return selecionados
+
+    def _ajustar(self, individuo):
+        # Função serve para ajustar os individos apos o crossover e a mutação
+        # Pode ser que apos os operadores o valor saia dos limites
+
+        # Converte o individuo em um numero inteiro
+        numero = int(''.join(individuo), 2)
+        if numero < self.x_min:
+            # se o numero for menor que o limite minino, ele agora recebe o valor do limite minino
+            limite = bin(self.x_min).replace('0b', '' if self.x_min < 0 else '+').zfill(self.num_bits)
+            for indice, bit in enumerate(limite):
+                individuo[indice] = bit
+
+        elif numero > self.x_max:
+            limite = bin(self.x_max).replce('0b', '' if self.x_max < 0 else '+').zfill(self.num_bits)
+            for indice, bit in enumerate(limite):
+                individuo[indice] = bit
