@@ -10,10 +10,11 @@ Algoritmo genético para encontrar o valor de x para o qual a função f(x) = x�
 ## Modo de Execução
 Digite o comando abaixo no terminal
 
-`python main.py main.py <tamanho-da-população> <numero-de-geraçãoes> <taxa-de-mutação> <taxa-de-crossover> <imprimir-cada-geracao(1-true,2-false)>`
+`python main.py <tamanho-da-população> <numero-de-gerações> <taxa-de-mutação> <taxa-de-crossover> <imprimir-cada-geracao(1-true,2-false)>`
 
 Se não for passado os argumentos necessários, o programa executará com os seguintes parametros:
 - População com 30 indivíduos
-- 20 gerações
+- Usará 20 gerações
 - Taxa de mutação de 1%
 - Taxa de crossover de 60%
+- Não mostrará a população depois de cada geração
