@@ -4,7 +4,7 @@ class Genetic_Algorithm():
     """
         Algoritmo genético para encontrar o x para o qual a função x^2 - 3x + 4 assume o valor máximo
     """
-    def __init__(self, x_min, x_max, tam_populacao, taxa_mutacao, taxa_crossover, num_geracoes):
+    def __init__(self, x_min, x_max, tam_populacao, num_geracoes, taxa_mutacao, taxa_crossover):
     # Inicializa todos os atributos da instância
         self.x_min = x_min
         self.x_max = x_max
@@ -22,7 +22,6 @@ class Genetic_Algorithm():
 
         # gera os individuos da população
         self._gerarPopulacao()
-        self.mostrarPopulacao()
     
     def _gerarPopulacao(self):
         # criando a lista de lista que será a populacao
@@ -40,16 +39,16 @@ class Genetic_Algorithm():
             for bit in num_bin:
                 individuo.append(bit)
 
-    def mostrarPopulacao(self):
-        print("Populacao inicial:")
+        print("\nPopulacao inicial gerada aleatoriamente:\n")
         for individuo in self.populacao:
             print(individuo)
-    
+
+
     def funcao_objetivo(self, num_bin):
         # Converte o número binário para o formato inteiro
         num = int(''.join(num_bin), 2)
         # Calcula e retorna o resultado da função objetivo
-        return num**2 -3*num + 4
+        return (num*num) - (3*num) + 4
 
     def calcularAptidao(self):
         # Calcula a nota associada a cada indíviduo que avalia quão boa é a solução por ele representada.
@@ -60,7 +59,7 @@ class Genetic_Algorithm():
  
     def crossover(self, pai, mae):
         # Aplica o crossover de acordo com uma dada probabilidade (taxa de crossover)
-        
+
         # Verifica a possibilidade de fazer crossover
         if randint(1, 100) <= self.taxa_crossover:
             # Escolher ponto de corte
@@ -99,7 +98,7 @@ class Genetic_Algorithm():
 
         # Calcula a propabilidade de selecao
         somaTotal = sum(self.aptidao)
-        # Probabilidade de selecao dos individuso
+        # Probabilidade de selecao dos individuos
         self.prob_selecao = []
         for i in range(len(self.aptidao)):            
             self.prob_selecao.append((self.aptidao[i]/somaTotal)*100)
@@ -119,20 +118,18 @@ class Genetic_Algorithm():
         '''
         # Soma dos valores de aptidao de todos os individuos da populacao
         soma = somaTotal
-        selecionados = []
+
         # Guarda a aptidao ate o momento
         s = 0
-        while(len(selecionados) < 2):
-            # Seleciona um ponto flutuante aleatorio dentro do interavalo
-            r = uniform(0, soma)
-            for i in range(len(self.prob_selecao)):
-                s += self.prob_selecao[i]
-                if s >= r:
-                    selecionados.append(self.populacao[i])
-                    break
-        # Retorna uma lista de selecionados com dois individuos                    
-        return selecionados
+       
+        # Seleciona um ponto flutuante aleatorio dentro do intervalo
+        r = uniform(0, 100)
+        for j in range(len(self.populacao)):
+            s += self.prob_selecao[j]
+            if s >= r:
+                return self.populacao[j]
 
+        
     def _ajustar(self, individuo):
         # Função serve para ajustar os individos apos o crossover e a mutação
         # Pode ser que apos os operadores o valor saia dos limites
@@ -144,8 +141,8 @@ class Genetic_Algorithm():
             limite = bin(self.x_min).replace('0b', '' if self.x_min < 0 else '+').zfill(self.num_bits)
             for indice, bit in enumerate(limite):
                 individuo[indice] = bit
-
         elif numero > self.x_max:
+            # se o numero for maior que o maximo
             limite = bin(self.x_max).replace('0b', '' if self.x_max < 0 else '+').zfill(self.num_bits)
             for indice, bit in enumerate(limite):
                 individuo[indice] = bit
@@ -159,13 +156,14 @@ class Genetic_Algorithm():
         
         menor_2 = 0
         for j in range(1, len(self.aptidao)):
-            if(self.aptidao[j] < self.aptidao[menor_2] and j != menor_1):
-                menor_2 = i
-
+            if(self.aptidao[j] <= self.aptidao[menor_2] and j != menor_1):
+                menor_2 = j
+        print(menor_1, menor_2)
         self.populacao[menor_1] = filho_1
         self.populacao[menor_2] = filho_2
 
-    def imprimeComCusto(self, pop):
-        print("Populacao", pop)
+    def imprimeComCusto(self, geracao):
+        print("População na geração " + str(geracao+1) + "\n")
         for i in range(len(self.populacao)):
             print(self.populacao[i], self.aptidao[i], str(self.prob_selecao[i]) + "%")
+        print()
