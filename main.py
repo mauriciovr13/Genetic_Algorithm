@@ -1,21 +1,24 @@
 import sys
 from Genetic_Algorithm import Genetic_Algorithm
 
-# main.py <tamanho-da-população> <numero-de-geraçãoes> <taxa-de-mutação> <taxa-de-crossover> <imprime-cada-geracao(1-true,2-false)>
+# main.py <tamanho-da-população> <numero-de-geraçãoes> <taxa-de-mutação> <taxa-de-crossover> <imprime-cada-geracao(1-true,0-false)>
 def main():
     ga = None
     imprime_cada_geracao = None
+    num_geracoes = 20
     if len(sys.argv) != 6:
         print("Esperava-se o seguinte comando: \"python main.py <tamanho-da-população> <numero-de-geraçãoes> <taxa-de-mutação> <taxa-de-crossover> <imprime-cada-geracao>\"")
         print('Nao foi passado argumentos na linha de comando, o algoritmo será executado com as configuraçoes padrão')
         print('Tamanho da populacao: 30, Numero de Geraçoes: 20, Taxa de mutação: 1%, Taxa de crossover: 60%')
         ga = Genetic_Algorithm(-10, 10, 30, 20, 1, 60)
         imprime_cada_geracao = False
+        
     else:
         print('O algoritmo genético funcionara com os seguintes parametros')
         print('Tamanho da populacao:', sys.argv[1], 'Numero de Geraçoes:', sys.argv[2], ', Taxa de mutação:', sys.argv[3], '%, Taxa de crossover:', sys.argv[4], '%')
         ga = Genetic_Algorithm(-10, 10, int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]))
         imprime_cada_geracao = True if int(sys.argv[5]) else False
+        num_geracoes = int(sys.argv[2])
     
     for i in range(ga.num_geracoes):
         # Calcula a aptidao da populacao atual
@@ -42,7 +45,11 @@ def main():
         
         if imprime_cada_geracao:
             ga.imprimeComCusto(i)
+
         ga.populacao = nova_populacao
+
+    print("\nResultado apos as gerações")
+    ga.imprimeComCusto(num_geracoes-1)
 
 
 if __name__ == "__main__":
